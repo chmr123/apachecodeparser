@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.util.ArrayList;
@@ -48,9 +49,13 @@ public class JaccardSimilarity {
 		
 		Map<String, Double> jaccards = new LinkedHashMap<String, Double>();
 		
+		FileWriter fw = new FileWriter("results.txt");
+		ArrayList<Double> result = new ArrayList<Double>();
+		
 		int c1 = 0;	
 		int c2 = 0;
 		Double jaccardIndex = 0.0;
+		boolean error = false;
 		for(String line1 : issues){
 			c1++;
 			System.out.println("Processing " + c1);			
@@ -69,11 +74,33 @@ public class JaccardSimilarity {
 				if(union == 0){
 					continue;
 				}
+				
+				
 				jaccardIndex = intersection / union;
+				if(jaccardIndex == 4.5){
+					error = true;
+					System.out.println(line1);
+					System.out.println(line2);
+					System.out.println(intersection + " / " + union);
+					break;
+				}
 				String key = String.valueOf(c1) + String.valueOf(c2);
-				jaccards.put(key, jaccardIndex);
+				result.add(jaccardIndex);
+				
+				//jaccards.put(key, jaccardIndex);
 			}
+			if(error == true) break;
 		}
+		
+		Collections.sort(result);
+		Collections.reverse(result);
+		
+		for(Double d : result){
+			fw.write(d + "\n");
+		}
+		
+		fw.flush();
+		fw.close();
 		
 		jaccards = sortByValue(jaccards);
 			
@@ -94,8 +121,8 @@ public class JaccardSimilarity {
         return new ArrayList<String>(set);
     }
 
-    public static List<String> intersection(List<String> list1, List<String> list2) {
-        List<String> list = new ArrayList<String>();
+    public static Set<String> intersection(List<String> list1, List<String> list2) {
+        Set<String> list = new HashSet<String>();
 
         for (String t : list1) {
             if(list2.contains(t)) {
