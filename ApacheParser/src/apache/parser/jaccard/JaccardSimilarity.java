@@ -50,6 +50,7 @@ public class JaccardSimilarity {
 		Map<String, Double> jaccards = new LinkedHashMap<String, Double>();
 		
 		FileWriter fw = new FileWriter("results.txt");
+		
 		ArrayList<Double> result = new ArrayList<Double>();
 		
 		int c1 = 0;	
@@ -77,12 +78,14 @@ public class JaccardSimilarity {
 				
 				
 				jaccardIndex = intersection / union;
-				if(jaccardIndex == 4.5){
-					error = true;
-					System.out.println(line1);
-					System.out.println(line2);
-					System.out.println(intersection + " / " + union);
-					break;
+				if(jaccardIndex >= 0.2){
+					FileWriter fw1 = new FileWriter("topmapping.txt",true);
+					fw1.write(jaccardIndex + ": \n");
+					fw1.write(line1 + "\n");
+					fw1.write(line2 + "\n");
+					fw1.write("\n");
+					fw1.flush();
+					fw1.close();
 				}
 				String key = String.valueOf(c1) + String.valueOf(c2);
 				result.add(jaccardIndex);
