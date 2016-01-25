@@ -253,7 +253,7 @@ public class TfIdf {
 		String[] bwords;
 		String[] bdocs;
 		
-		FileWriter fw = new FileWriter("issues.txt");
+		FileWriter fw = new FileWriter("termlist.txt");
 		int count = 0;
 		for (Iterator<String> it = tf.documents.keySet().iterator(); it.hasNext(); ) {
 			count ++;
@@ -262,6 +262,7 @@ public class TfIdf {
 			//System.out.println(word);
 			//System.out.println("------------------------------------------");
 			bwords = tf.documents.get(doc).bestWordList(10);
+			fw.write(doc + ": ");
 			for(String s : bwords){
 				fw.write(s + ", ");
 			}
@@ -280,6 +281,9 @@ public class TfIdf {
 		}
 		fw.flush();
 		fw.close();
+		
+		VerbPhrases vb = new VerbPhrases();
+		vb.getVP("filteredIssues");
 		
 	}
 	

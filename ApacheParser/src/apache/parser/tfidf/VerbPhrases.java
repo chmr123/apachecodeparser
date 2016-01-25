@@ -31,8 +31,6 @@ public class VerbPhrases {
 		ArrayList<String> stopwords = new ArrayList<String>();
 		ArrayList<String> postags = new ArrayList<String>();
 		Set<String> vp_each = new HashSet<String>();
-
-		//ArrayList<String> realnouns = getRealNouns();
 		File file = new File("stopwords.txt");
 		BufferedReader br = new BufferedReader(new FileReader(file));
 		String line;
@@ -60,15 +58,18 @@ public class VerbPhrases {
 		int i = 0;
 		File[] files = new File(folder).listFiles();
 		//LinkedHashMap<String, ArrayList<String>> verb_phrase = new LinkedHashMap<String, ArrayList<String>>();
-		FileWriter fw = new FileWriter("action units.txt", true);
-		for (File f : files) {
 		
+	for (File f : files) {		
+		try{
+			FileWriter fw = new FileWriter("vb\\" + f.getName(), true);
 			ArrayList<String> verbObj = new ArrayList<String>();
 			if(!f.getName().endsWith(".txt")) continue;
 			System.out.println("Processing file " + ++i + ": " + f.getName());
 			String filepath = f.getPath();
 			DocumentPreprocessor dp = new DocumentPreprocessor(filepath);
-			dp.setSentenceDelimiter("\n");
+			String[] deliminator = {".", "?", "!", ":", "\n"};
+			//dp.setSentenceDelimiter("\n");
+			dp.setSentenceFinalPuncWords(deliminator);
 			for (List<HasWord> sentence : dp) {
 				Tree parse = lp.apply(sentence);
 				//parse.pennPrint();
@@ -133,50 +134,24 @@ public class VerbPhrases {
 						
 						verbs.clear();
 
-						/*phraseList.add(subtree);
-						String np = subtree.toString();
-
-						np = np.replaceAll("\\([A-Z]+ ", "");
-						np = np.replaceAll("\\)", "");
-
-						for (String tag : postags) {
-							np = np.replace(tag, "");
-						}
-						String[] terms = np.split("\\s+");
-						if (terms.length < 100 && terms.length > 0) {
-							String goodterm = "";
-							String goodtermstop = "";
-							for (String s : terms) {
-								s = s.toLowerCase();
-								goodtermstop = goodtermstop + s + " ";
-							}
-							if (goodtermstop.lastIndexOf(" ") != -1)
-								vp_each.add(goodtermstop.substring(0, goodtermstop.lastIndexOf(" ")));
-						}*/
+						
 					}
 				}
 				// System.out.println(allnp);
 			}
-			fw.write(f.getName() + "\n");
 			for(String vp : verbObj){
 				fw.write(vp + "\n");
 			}
 			
-			/*for (int j = 0; j < verbObj.size() - 1; j++) {
-				String current = verbObj.get(j).substring(verbObj.get(j).indexOf(" ") + 1);
-				String next = verbObj.get(j + 1).substring(verbObj.get(j + 1).indexOf(" ") + 1);
-				//if (!current.equals(next))
-					//System.out.println(verbObj.get(j));
-			}*/
-			
-			
-			//verb_phrase.put(f.getName(), verbObj);
-			//System.out.println(verbObj);
-			//System.out.println(verbObj.get(verbObj.size() - 1));
+			fw.flush();
+			fw.close();
+		}catch(Exception e){
+			System.out.println(e.getMessage());
+		}
+						
 		} // Loop each file to get verb phrases
 		//System.out.println(verb_phrase);
-		fw.flush();
-		fw.close();
+		
 	}
 
 	public static void getParentVB(Tree parent, Tree root) {
@@ -190,45 +165,4 @@ public class VerbPhrases {
 			getParentVB(parentOfParent, root);
 		}
 	}
-
-	/*public static void actionUnitAnalysis(String filename, Set<String> vp, Set<String> np) throws IOException {
-
-		ArrayList<String> verbs = new ArrayList<String>();
-		File verbfile = new File("verbs.txt");
-		BufferedReader br = new BufferedReader(new FileReader(verbfile));
-		String line;
-		while ((line = br.readLine()) != null) {
-			verbs.add(line);
-		}
-
-		System.out.println("Analyzing file " + filename);
-		FileWriter fw = new FileWriter("action unit.txt", true);
-		fw.write(filename + "\n");
-		for (String s : vp) {
-			String[] splitted = s.split(" ");
-			String verb = splitted[0];
-			ArrayList<String> others = new ArrayList<String>();
-			for (int i = 1; i < splitted.length; i++) {
-				others.add(splitted[i]);
-			}
-			for (String n : np) {
-				if (others.contains(n))
-					fw.write(verb + " " + n + "\n");
-			}
-		}
-		fw.flush();
-		fw.close();
-	}*/
-
-	/*public static ArrayList<String> getRealNouns() throws IOException {
-		ArrayList<String> actionUnits = new ArrayList<String>();
-		File file = new File("nouns.txt");
-		// File file = new File("shortcutkey.txt");
-		BufferedReader br = new BufferedReader(new FileReader(file));
-		String line;
-		while ((line = br.readLine()) != null) {
-			actionUnits.add(line.toLowerCase());
-		}
-		return actionUnits;
-	}*/
 }

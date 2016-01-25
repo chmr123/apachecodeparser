@@ -2,7 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/CDC-1.1%Foundation-1.1"/>
-	<classpathentry kind="lib" path="C:/Users/install/Desktop/Crowdsourcing/opencsv-3.6.jar"/>
-	<classpathentry kind="lib" path="C:/Users/install/Desktop/ReqToCode/javaparser/javaparser-core-2.3.1-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mingrui/Desktop/NLPAPI/opencsv-3.5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mingrui/Desktop/NLPAPI/javaparser-core-2.3.1-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mingrui/Desktop/NLPAPI/stanford-corenlp-full-2015-04-20/stanford-corenlp-3.5.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

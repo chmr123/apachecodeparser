@@ -44,7 +44,7 @@ public class Document {
 		Double[] tempdata;
 		words = new TreeMap<String, Double[]>();
 		ArrayList<String> stopwords = new ArrayList<String>();
-		BufferedReader stopword = new BufferedReader(new FileReader("stopword.txt"));
+		BufferedReader stopword = new BufferedReader(new FileReader("stopwords.txt"));
 		String stopw;
 		while((stopw = stopword.readLine()) != null){
 			stopwords.add(stopw);
