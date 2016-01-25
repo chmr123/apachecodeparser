@@ -12,9 +12,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import apache.parser.tfidf.StanfordLemmatizer;
+import edu.stanford.nlp.simple.Sentence;
+
 
 public class PickRequirement {
 	static Stemmer stemmer = new Stemmer();
+	static StanfordLemmatizer lemmatizer = new StanfordLemmatizer();
 	public static void main(String[] args) throws IOException {
 		File[] vbfiles = new File("vb").listFiles();
 		File termlist = new File("termlist.txt");
@@ -41,7 +45,7 @@ public class PickRequirement {
 			ArrayList<String> topterms = termlist_map.get(f.getName());
 			BufferedReader br1 = new BufferedReader(new FileReader(f));
 			while((line = br1.readLine()) != null){
-				line = stemVB(line);
+				line = lemmatizeVB(line);
 				List<String> list = Arrays.asList(line.split("\\s+"));
 				for(String term : topterms){
 					if(list.contains(term)){
@@ -78,6 +82,15 @@ public class PickRequirement {
 			stemmed = stemmed + stem(s) + " ";
 		}
 		return stemmed;
+	}
+	
+	private static String lemmatizeVB(String sentence){
+		String[] split = sentence.split("\\s+");
+		String lemma = "";
+		for(String s : split){
+			lemma = lemma + lemmatizer.lemmatize(s) + " ";
+		}
+		return lemma;
 	}
 
 }

@@ -70,6 +70,7 @@ public class TfIdf {
 	 * @throws IOException 
 	 */
 	public TfIdf(String foldername) throws IOException {
+		StanfordLemmatizer lemmatizer = new StanfordLemmatizer();
 		allwords = new TreeMap<String, Double[]>();
 		documents = new TreeMap<String, Document>();
 		docSize = 0;
@@ -79,12 +80,12 @@ public class TfIdf {
 			String[] files = datafolder.list(filter);
 			for (int i = 0; i < files.length; i++) {
 				docSize++;
-				insertDocument(foldername + "/" + files[i]);
+				insertDocument(foldername + "/" + files[i], lemmatizer);
 			}
 		}
 		else {
 			docSize++;
-			insertDocument(foldername);
+			insertDocument(foldername, lemmatizer);
 		}
 		corpusUpdated = false;
 		if (corpusUpdated == false)
@@ -135,11 +136,11 @@ public class TfIdf {
 	 * @param filename Location of the text file
 	 * @throws IOException 
 	 */
-	public void insertDocument(String filename) throws IOException {
+	public void insertDocument(String filename, StanfordLemmatizer lemmatizer) throws IOException {
 		BufferedReader br;
 		try {
 			br = new BufferedReader(new FileReader(filename));
-			Document doc = new Document(br, this);
+			Document doc = new Document(br, this, lemmatizer);
 			documents.put(filename.substring(filename.lastIndexOf('/') + 1), doc);
 			if (corpusUpdated == false) updateCorpus();
 			//System.out.println(doc.sumof_n_kj);
@@ -240,8 +241,10 @@ public class TfIdf {
 	 */
 	public static void main(String[] args) throws IOException{
 		//Test code for TfIdf
+		
 		String folder = args[0];
 		TfIdf tf = new TfIdf(folder);
+		
 		String word;
 		Double[] corpusdata;
 		for (Iterator<String> it = tf.allwords.keySet().iterator(); it.hasNext(); ) {
@@ -282,8 +285,8 @@ public class TfIdf {
 		fw.flush();
 		fw.close();
 		
-		VerbPhrases vb = new VerbPhrases();
-		vb.getVP("filteredIssues");
+		//VerbPhrases vb = new VerbPhrases();
+		//vb.getVP("filteredIssues");
 		
 	}
 	

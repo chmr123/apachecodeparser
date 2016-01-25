@@ -12,6 +12,8 @@ import java.util.SortedMap;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
+import edu.stanford.nlp.simple.*;
+
 
 /**
  * Class that represents a text document
@@ -35,7 +37,7 @@ public class Document {
 	 * @param parent the TfIdf class calling this ctor
 	 * @throws IOException 
 	 */
-	public Document(BufferedReader br, TfIdf parent) throws IOException {
+	public Document(BufferedReader br, TfIdf parent, StanfordLemmatizer lemmatizer) throws IOException {
 		String line;
 		String word;
 		StringTokenizer tokens;
@@ -56,7 +58,8 @@ public class Document {
 				while(tokens.hasMoreTokens()) {
 					word = tokens.nextToken().toLowerCase();
 					word.trim();
-					word = stem(word); // stem the word
+					//word = stem(word); // stem the word
+					word = lemmatizer.lemmatize(word);
 					if (word.length() < 2) continue;
 					if (word.startsWith("@")) continue;
 					if (word.startsWith("#")) continue;
