@@ -61,7 +61,7 @@ public class VerbPhrases {
 		
 	for (File f : files) {		
 		try{
-			FileWriter fw = new FileWriter("vb\\" + f.getName(), true);
+			FileWriter fw = new FileWriter("vb_comment\\" + f.getName(), true);
 			ArrayList<String> verbObj = new ArrayList<String>();
 			if(!f.getName().endsWith(".txt")) continue;
 			System.out.println("Processing file " + ++i + ": " + f.getName());

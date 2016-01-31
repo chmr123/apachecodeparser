@@ -13,5 +13,6 @@
 	<classpathentry kind="lib" path="C:/Users/Mingrui/Desktop/NLPAPI/stanford-corenlp-full-2015-12-09/jollyday.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Mingrui/Desktop/NLPAPI/stanford-corenlp-full-2015-12-09/protobuf.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Mingrui/Desktop/NLPAPI/stanford-corenlp-full-2015-12-09/xom.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Mingrui/Desktop/NLPAPI/jaws-bin.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

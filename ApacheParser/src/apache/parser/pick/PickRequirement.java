@@ -9,19 +9,41 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import apache.parser.tfidf.StanfordLemmatizer;
-import edu.stanford.nlp.simple.Sentence;
 
 
 public class PickRequirement {
 	static Stemmer stemmer = new Stemmer();
 	static StanfordLemmatizer lemmatizer = new StanfordLemmatizer();
 	public static void main(String[] args) throws IOException {
-		File[] vbfiles = new File("vb").listFiles();
-		File termlist = new File("termlist.txt");
+		
+		String termlistfile = null;
+		String vbfolder = null;
+		String pickedfilefolder = null;
+		
+		 for(int i = 0;i < args.length;i++) {
+		
+		       if ("-t".equals(args[i])) {
+		    	   termlistfile = args[i+1];
+		    	  i++;
+		      } else if ("-f".equals(args[i])) {
+		    	  vbfolder = args[i+1];
+		          i++;
+		      } else if ("-p".equals(args[i])){
+		    	  pickedfilefolder = args[i+1];
+		    	  i++;
+		      }
+		    }
+		 
+		File[] vbfiles = new File(vbfolder).listFiles();
+		File termlist = new File(termlistfile);
 		
 		BufferedReader br = new BufferedReader(new FileReader(termlist));
 		String line;
@@ -41,22 +63,37 @@ public class PickRequirement {
 		int i = 0;
 		for(File f : vbfiles){
 			System.out.println("Picking file " + ++i + ": " + f.getName());
-			ArrayList<String> picked = new ArrayList<String>();
+			Set<String> picked = new HashSet<String>();
 			ArrayList<String> topterms = termlist_map.get(f.getName());
 			BufferedReader br1 = new BufferedReader(new FileReader(f));
 			while((line = br1.readLine()) != null){
 				line = lemmatizeVB(line);
-				List<String> list = Arrays.asList(line.split("\\s+"));
+				List<String> list = new LinkedList<String>(Arrays.asList(line.split("\\s+")));
+				String verb = list.get(0);
+				if(!isAlpha(verb)) continue;
+				Iterator<String> iter = list.iterator();
+				while (iter.hasNext()) {
+				   String s = iter.next(); // must be called before you can call i.remove()
+				   if(!isAlpha(s)){
+					   iter.remove();
+				   }
+				   // Do something   
+				}
+				
+				String newline = "";
+				for(String s : list){
+					newline = newline + s + " ";
+				}
 				for(String term : topterms){
 					if(list.contains(term)){
-						picked.add(line);
+						picked.add(newline);
 						break;
 					}
 				}
 			}
 			br1.close();
 			if(picked.size() != 0){
-				FileWriter fw = new FileWriter("picked\\" + f.getName());
+				FileWriter fw = new FileWriter(pickedfilefolder + "\\" + f.getName());
 				for(String p : picked){
 					fw.write(p + "\n");
 				}
@@ -93,4 +130,7 @@ public class PickRequirement {
 		return lemma;
 	}
 
+	public static boolean isAlpha(String name) {
+	    return name.matches("[a-zA-Z]+");
+	}
 }

@@ -256,7 +256,7 @@ public class TfIdf {
 		String[] bwords;
 		String[] bdocs;
 		
-		FileWriter fw = new FileWriter("termlist.txt");
+		FileWriter fw = new FileWriter("termlist_comment.txt");
 		int count = 0;
 		for (Iterator<String> it = tf.documents.keySet().iterator(); it.hasNext(); ) {
 			count ++;
@@ -285,8 +285,8 @@ public class TfIdf {
 		fw.flush();
 		fw.close();
 		
-		//VerbPhrases vb = new VerbPhrases();
-		//vb.getVP("filteredIssues");
+		VerbPhrases vb = new VerbPhrases();
+		vb.getVP(folder);
 		
 	}
 	

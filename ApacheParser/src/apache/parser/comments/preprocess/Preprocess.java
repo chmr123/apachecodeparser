@@ -25,7 +25,7 @@ public class Preprocess {
 				if(line.startsWith("@")) continue;
 				content = content + line + " ";
 			}
-			fw.write(content);
+			fw.write(content.replaceAll("\\s+", " "));
 			fw.flush();
 			fw.close();
 			count++;

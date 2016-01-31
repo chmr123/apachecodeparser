@@ -50,7 +50,11 @@ public class ApacheParserComments {
 				try {
 					for(Comment c : comment){
 					//System.out.println(comment);
-					writer.write(c.toString() + "\n");
+						if(c.toString().contains("Licensed to the Apache Software Foundation")) continue;
+						String content = c.toString();
+						content = content.replace("*", "");
+						content = content.replace("\\", "");
+						writer.write(content + "\n");
 					//writer.write("zzzzzzzzzz\n");
 					}
 				} catch (IOException e) {
