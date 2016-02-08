@@ -112,7 +112,6 @@ public class ApacheParser {
 			if (f.isFile()) {
 				files.add(f);
 			}
-
 		}
 	}
 
