@@ -18,6 +18,8 @@ public class ApacheBaseline {
 		Map<String, ArrayList<String>> classes = new LinkedHashMap<String, ArrayList<String>>();
 		Map<String, ArrayList<String>> req_class_map = new LinkedHashMap<String, ArrayList<String>>());
 		
+		
+		//generate a map storing reqID and terms
 		CSVReader reader = new CSVReader(new FileReader("req.csv"));
 	    String [] nextLine;
 	    while ((nextLine = reader.readNext()) != null) {
@@ -27,6 +29,8 @@ public class ApacheBaseline {
 	        req.put(reqID, summary);
 	    }
 	    
+	    
+	    //generate a map storing classID and the methods
 	    reader = new CSVReader(new FileReader("classes.csv"));
 	    ArrayList<String> sameClassMethods = new ArrayList<String>();
 	    while ((nextLine = reader.readNext()) != null) {
@@ -44,6 +48,8 @@ public class ApacheBaseline {
 	        }
 	    }
 	    
+	    
+	    //get the links between req and classes
 	    reader = new CSVReader(new FileReader("req_class.csv"));
 	    while ((nextLine = reader.readNext()) != null) {
 	    	String reqID = nextLine[0];
