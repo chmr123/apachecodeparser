@@ -15,7 +15,7 @@ public class ApacheParser {
 	static CSVWriter writer;
 	static File file;
 	public static void main(String[] args) throws Exception {
-		writer = new CSVWriter(new FileWriter("output.csv"), ',');
+		writer = new CSVWriter(new FileWriter("classes.csv"), ',');
 		// creates an input stream for the file to be parsed
 		String root = args[0];
 		ArrayList<File> files = new ArrayList<File>();
@@ -73,18 +73,19 @@ public class ApacheParser {
 				String sourceFile = "";
 				String comment = "";
 				if(node != null){
-					nodeName = node.toString().replaceAll("\"", "");
+					nodeName = node.toString().replaceAll("\"", "").replaceAll("'", "").replace(",", " ");
 				}
 				
+				if(nodeName.contains("switch")) continue;
 				sourceFile = file.getName().replaceAll("\"", "");
 				
 				if(node.getComment() != null){
 					comment = node.getComment().toString().replaceAll("\"", "");
 				}
-				entries[0] = nodeName;
+				entries[0] = "xxx";
 				entries[1] = n.getName();
 				entries[2] = sourceFile;
-				entries[3] = comment;
+				//entries[3] = comment;
 				writer.writeNext(entries);
 			}
 			super.visit(n, arg);

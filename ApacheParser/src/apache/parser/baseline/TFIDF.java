@@ -14,14 +14,14 @@ public class TFIDF {
 	ArrayList<String> lowkeys = new ArrayList<String>();
 	int totalSize;
 	public TFIDF(int totalSize) throws IOException{
-		BufferedReader br1 = new BufferedReader(new FileReader("req_all_stem.txt"));
+		BufferedReader br1 = new BufferedReader(new FileReader("req.txt"));
 		String line;
 		while((line = br1.readLine()) != null){
 			String key = line.split(">>>")[0];
 			highkeys.add(key);
 		}
 		
-		BufferedReader br2 = new BufferedReader(new FileReader("uc_all_stem.txt"));	
+		BufferedReader br2 = new BufferedReader(new FileReader("classes.txt"));	
 		while((line = br2.readLine()) != null){
 			String key = line.split(">>>")[0];
 			lowkeys.add(key);

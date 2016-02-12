@@ -12,8 +12,9 @@ import java.util.LinkedHashMap;
 public class IDF {
 	private int totaldocnum; 
 	ArrayList<HashSet<String>> documents = new ArrayList<HashSet<String>>();
+	ArrayList<String> wordlist;
 	public IDF(int totaldocnum) throws IOException{ 
-		BufferedReader br = new BufferedReader(new FileReader("uc_all_stem.txt"));
+		BufferedReader br = new BufferedReader(new FileReader("classes.txt"));
 		String line;
 		
 		while((line = br.readLine()) != null){
@@ -28,7 +29,7 @@ public class IDF {
 		
 		br.close();
 		
-		br = new BufferedReader(new FileReader("req_all_stem.txt"));
+		br = new BufferedReader(new FileReader("req.txt"));
 		while((line = br.readLine()) != null){
 			String desc = line.split(">>>")[1].replaceAll("[.,:;()\"']", " ");
 			String[] words = desc.split(" ");
@@ -42,13 +43,15 @@ public class IDF {
 		br.close();
 		
 		this.totaldocnum = totaldocnum;
+		
+		System.out.println("Generating word list");
+		WordList wl = new WordList();
+		wordlist = wl.getAllTerms();
 	}
 	
 	public LinkedHashMap<String, ArrayList<Double>> gethighIDF() throws IOException{ 
-		WordList wl = new WordList();
-		ArrayList<String> wordlist = wl.getAllTerms();
 		LinkedHashMap<String, ArrayList<Double>> idf_high_all = new LinkedHashMap<String, ArrayList<Double>>();
-		BufferedReader br = new BufferedReader(new FileReader("req_all_stem.txt"));
+		BufferedReader br = new BufferedReader(new FileReader("req.txt"));
 		String line;
 		while((line = br.readLine()) != null){
 			ArrayList<Double> idfvector = new ArrayList<Double>(Collections.nCopies(wordlist.size(), 0.0));
@@ -80,10 +83,8 @@ public class IDF {
 	}
 	
 	public LinkedHashMap<String, ArrayList<Double>> getlowIDF() throws IOException{ 
-		WordList wl = new WordList();
-		ArrayList<String> wordlist = wl.getAllTerms();
 		LinkedHashMap<String, ArrayList<Double>> idf_low_all = new LinkedHashMap<String, ArrayList<Double>>();
-		BufferedReader br = new BufferedReader(new FileReader("uc_all_stem.txt"));
+		BufferedReader br = new BufferedReader(new FileReader("classes.txt"));
 		String line;
 		while((line = br.readLine()) != null){
 			ArrayList<Double> idfvector = new ArrayList<Double>(Collections.nCopies(wordlist.size(), 0.0));

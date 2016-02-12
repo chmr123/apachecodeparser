@@ -10,12 +10,15 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 
 public class TF {
-	public LinkedHashMap<String, ArrayList<Double>> gethighTF() throws IOException{
+	ArrayList<String> wordlist;
+	public TF() throws IOException{
+		System.out.println("Generating word list");
 		WordList wl = new WordList();
-		ArrayList<String> wordlist = wl.getAllTerms();
-		
+		wordlist = wl.getAllTerms();
+	}
+	public LinkedHashMap<String, ArrayList<Double>> gethighTF() throws IOException{	
 		LinkedHashMap<String, ArrayList<Double>> tf_high_all = new LinkedHashMap<String, ArrayList<Double>>();
-		BufferedReader br = new BufferedReader(new FileReader("req_all_stem.txt"));
+		BufferedReader br = new BufferedReader(new FileReader("req.txt"));
 		String line;
 		while((line = br.readLine()) != null){
 			ArrayList<Double> tfvector = new ArrayList<Double>(Collections.nCopies(wordlist.size(), 0.0));
@@ -47,12 +50,8 @@ public class TF {
 	}
 	
 	public LinkedHashMap<String, ArrayList<Double>> getlowTF() throws IOException{
-		WordList wl = new WordList();
-		ArrayList<String> wordlist = wl.getAllTerms();
-		//if(wordlist.contains("configur")) System.out.println("Yes");
-		//else System.out.println("No");
 		LinkedHashMap<String, ArrayList<Double>> tf_low_all = new LinkedHashMap<String, ArrayList<Double>>();
-		BufferedReader br = new BufferedReader(new FileReader("uc_all_stem.txt"));
+		BufferedReader br = new BufferedReader(new FileReader("classes.txt"));
 		String line;
 		while((line = br.readLine()) != null){
 			ArrayList<Double> tfvector = new ArrayList<Double>(Collections.nCopies(wordlist.size(), 0.0));
