@@ -2,22 +2,22 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/CDC-1.1%Foundation-1.1"/>
-	<classpathentry kind="lib" path="C:/Users/install/Desktop/core-3.3.0-v_771.jar"/>
-	<classpathentry kind="lib" path="C:/Users/install/Desktop/lib/commons-collections-3.2.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/install/Desktop/lib/commons-configuration-1.6.jar"/>
-	<classpathentry kind="lib" path="C:/Users/install/Desktop/lib/commons-lang-2.5.jar"/>
-	<classpathentry kind="lib" path="C:/Users/install/Desktop/lib/commons-logging-1.1.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/install/Desktop/lib/org.eclipse.core.contenttype_3.4.1.R35x_v20090826-0451.jar"/>
-	<classpathentry kind="lib" path="C:/Users/install/Desktop/lib/org.eclipse.core.jobs_3.4.100.v20090429-1800.jar"/>
-	<classpathentry kind="lib" path="C:/Users/install/Desktop/lib/org.eclipse.core.resources_3.5.2.R35x_v20091203-1235.jar"/>
-	<classpathentry kind="lib" path="C:/Users/install/Desktop/lib/org.eclipse.core.runtime_3.5.0.v20090525.jar"/>
-	<classpathentry kind="lib" path="C:/Users/install/Desktop/lib/org.eclipse.equinox.common_3.5.1.R35x_v20090807-1100.jar"/>
-	<classpathentry kind="lib" path="C:/Users/install/Desktop/lib/org.eclipse.equinox.preferences_3.2.301.R35x_v20091117.jar"/>
-	<classpathentry kind="lib" path="C:/Users/install/Desktop/lib/org.eclipse.jdt.core_3.5.2.v_981_R35x.jar"/>
-	<classpathentry kind="lib" path="C:/Users/install/Desktop/lib/org.eclipse.osgi_3.5.2.R35x_v20100126.jar"/>
-	<classpathentry kind="lib" path="C:/Users/install/Desktop/ReqToCode/javaparser/javaparser-core-2.3.1-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="C:/Users/install/Desktop/lib/opencsv-3.3.jar"/>
-	<classpathentry kind="lib" path="C:/Users/install/Desktop/lib/stanford-corenlp-full-2015-12-09/stanford-corenlp-3.6.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/install/Desktop/lib/jsoup-1.8.3.jar"/>
+	<classpathentry kind="lib" path="C:/lib/commons-collections-3.2.1.jar"/>
+	<classpathentry kind="lib" path="C:/lib/commons-configuration-1.6.jar"/>
+	<classpathentry kind="lib" path="C:/lib/commons-lang-2.5.jar"/>
+	<classpathentry kind="lib" path="C:/lib/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="C:/lib/DependencyFinder.jar"/>
+	<classpathentry kind="lib" path="C:/lib/jsoup-1.8.3.jar"/>
+	<classpathentry kind="lib" path="C:/lib/opencsv-3.3.jar"/>
+	<classpathentry kind="lib" path="C:/lib/org.eclipse.core.contenttype_3.4.1.R35x_v20090826-0451.jar"/>
+	<classpathentry kind="lib" path="C:/lib/org.eclipse.core.jobs_3.4.100.v20090429-1800.jar"/>
+	<classpathentry kind="lib" path="C:/lib/org.eclipse.core.resources_3.5.2.R35x_v20091203-1235.jar"/>
+	<classpathentry kind="lib" path="C:/lib/org.eclipse.core.runtime_3.5.0.v20090525.jar"/>
+	<classpathentry kind="lib" path="C:/lib/org.eclipse.equinox.common_3.5.1.R35x_v20090807-1100.jar"/>
+	<classpathentry kind="lib" path="C:/lib/org.eclipse.equinox.preferences_3.2.301.R35x_v20091117.jar"/>
+	<classpathentry kind="lib" path="C:/lib/org.eclipse.jdt.core_3.5.2.v_981_R35x.jar"/>
+	<classpathentry kind="lib" path="C:/lib/org.eclipse.osgi_3.5.2.R35x_v20100126.jar"/>
+	<classpathentry kind="lib" path="C:/lib/stanford-corenlp-full-2015-12-09/stanford-corenlp-3.6.0.jar"/>
+	<classpathentry kind="lib" path="C:/lib/javaparser-core-2.3.1-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
