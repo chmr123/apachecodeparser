@@ -14,16 +14,23 @@ import java.util.Set;
 
 
 
+
+
+
+
 import com.opencsv.CSVReader;
 
 public class ApacheBaseline {
 	static Set<String> classesInTrueLinks = new HashSet<String>();
 	static Set<String> classesInProjects = new HashSet<String>();
 	static Set<String> classesInCommon = new HashSet<String>();
+	static Stemmer stemmer = new Stemmer();
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
 		int reqIDIndex = 0;
 		int titleIndex = 3;
+		
+		int nodeIndex = 0;
 		int methodIndex = 1;
 		int classIndex = 2;
 		
@@ -33,6 +40,7 @@ public class ApacheBaseline {
 		Map<String, Set<String>> classes = new LinkedHashMap<String, Set<String>>();
 		Map<String, Set<String>> req_class_map = new LinkedHashMap<String, Set<String>>();
 		
+		System.out.println("Generating word list");
 		
 		
 		//generate a map storing reqID and terms
@@ -42,6 +50,9 @@ public class ApacheBaseline {
 	        // nextLine[] is an array of values from the line
 	    	String reqID = nextLine[reqIDIndex];
 	        String summary = nextLine[titleIndex];
+	        
+	        //Stem terms in summary
+	        summary = stemSentence(summary);  
 	        req.put(reqID, summary);
 	        
 	        Set<String> modifiedFiles = new HashSet<String>();
@@ -60,19 +71,48 @@ public class ApacheBaseline {
 	    }
 	    
 	    reqSize = req.keySet().size();
+	    
 	    //generate a map storing classID and the methods
 	    reader = new CSVReader(new FileReader("classes.csv"));
 	    while ((nextLine = reader.readNext()) != null) {
 	        // nextLine[] is an array of values from the line
+	    	String codeNodes = nextLine[nodeIndex];
+	    	
 	    	String className = nextLine[classIndex];
 	        String methodName = nextLine[methodIndex];
+	       
+	        ArrayList<String> nodeTerms = new ArrayList<String>();
+	        codeNodes = codeNodes.replaceAll("[^a-zA-Z0-9]", " ");
+	        //System.out.println(codeNodes);
+	        String[] identifiers = codeNodes.split("\\s+");
+	        for(String i : identifiers){
+	        	nodeTerms.add(i.toLowerCase());
+	        	//System.out.println(i);
+	        }
+	        
+	        for(int i = 0; i < nodeTerms.size(); i++){
+	        	String beforeStem = nodeTerms.get(i);
+	        	String afterStem = stem(beforeStem);
+	        	nodeTerms.set(i, afterStem);
+	        }
+	        
 	        ArrayList<String> methodTerms = new ArrayList<String>();
 	        methodTerms = parseMethod(methodName);
+	       
+	        //Stem all terms 
+	        for(int i = 0; i < methodTerms.size(); i++){
+	        	String beforeStem = methodTerms.get(i);
+	        	String afterStem = stem(beforeStem);
+	        	methodTerms.set(i, afterStem);
+	        }
+	        
 	        if(classes.keySet().contains(className)){
 	        	Set<String> update = classes.get(className);
+	        	update.addAll(nodeTerms);
 	        	update.addAll(methodTerms);
 	        	classes.put(className, update);
 	        }else{
+	        	methodTerms.addAll(nodeTerms);
 	        	Set<String> update = new HashSet<String>(methodTerms);
 	        	classes.put(className, update);
 	        }
@@ -88,10 +128,14 @@ public class ApacheBaseline {
 	    //System.out.println("Classes in common: " + classesInProjects.size());
 	    writeFiles(req, classes, req_class_map);
 	    
+	    
+	    WordList wl = new WordList();
+		ArrayList<String> wordlist = wl.getAllTerms();
+		
 	    TrueLink truelink = new TrueLink();
 		int[][] trueLinkMatrix = truelink.getTrueLink(reqSize, classesSize);
 		
-	    TFIDF tfidf = new TFIDF(reqSize + classesSize);
+	    TFIDF tfidf = new TFIDF(reqSize + classesSize, wordlist);
 		LinkedHashMap<String, ArrayList<Double>> highTFIDF = tfidf.getHighTFIDF(reqSize);
 		LinkedHashMap<String, ArrayList<Double>> lowTFIDF = tfidf.getLowTFIDF(classesSize);
 		
@@ -103,18 +147,19 @@ public class ApacheBaseline {
 	
 		double[][] tfidfSimMatrix = new double[reqSize][classesSize];
 		double[][] tfidfSimMatrixBi = new double[reqSize][classesSize];
-		
+		Jaccard j = new Jaccard();
 		int highIndex = 0;
 		for(String high_key : highTFIDF.keySet()){
 			int lowIndex = 0;
 			for(String low_key : lowTFIDF.keySet()){
 				System.out.print("Calculating " + highIndex + " / " +  + reqSize + "\r");
-				double cosSim = getSimilarity(highTFIDF.get(high_key), lowTFIDF.get(low_key));
+				double sim = getSimilarity(highTFIDF.get(high_key), lowTFIDF.get(low_key));
+				//double sim = j.getJaccardIndex(highTFIDF.get(high_key), lowTFIDF.get(low_key)); // get Jaccard Index for two vectors
 				//double cosSimBi = getSimilarity(bigram_highTFIDF.get(high_key), bigram_lowTFIDF.get(low_key));
 				//double functionSim = functionMatrix[highIndex][lowIndex];
 				//double sim = cosSim > functionSim ? cosSim : functionSim;
 				//double sim = Math.sqrt(cosSim * functionSim);
-				tfidfSimMatrix[highIndex][lowIndex] = cosSim;
+				tfidfSimMatrix[highIndex][lowIndex] = sim;
 				//tfidfSimMatrixBi[highIndex][lowIndex] = cosSimBi;
 				lowIndex++;
 			}
@@ -122,7 +167,7 @@ public class ApacheBaseline {
 		}
 		
 		for(double threshold = 0.1; threshold < 0.9; threshold += 0.1){
-			System.out.println("Threshold: " + threshold);
+			System.out.printf("Threshold: %.1f\n",threshold);
 			int[][] predictedLinkMatrix = new int[reqSize][classesSize];
 			for(int high = 0; high < highTFIDF.keySet().size(); high++){
 				for(int low = 0; low < lowTFIDF.keySet().size(); low++){
@@ -141,7 +186,6 @@ public class ApacheBaseline {
 	
 	private static ArrayList<String> parseMethod(String method){
 		ArrayList<String> methodterms = new ArrayList<String>();
-		boolean capitalFound = false;
 		int startIndex = 0;
 		int endIndex = 0;
 		for(int index = 0; index < method.length(); index++){
@@ -219,6 +263,7 @@ public class ApacheBaseline {
 		double sim = up / (Math.sqrt(down1) * Math.sqrt(down2));
 		return sim;
 	}
+
 	
 	public static void compareLink(int[][] predictedMatrix, int[][] trueMatrix, int highSize, int lowSize){
 		double tp = 0;
@@ -245,6 +290,25 @@ public class ApacheBaseline {
 		 
 		System.out.printf("Recall: %.2f Precision: %.2f Fscore: %.2f\n", recall, precision, fscore);
 		
+	}
+	
+	private static String stem(String term){
+		char[] chars = term.toCharArray();
+		for (char c : chars)
+			stemmer.add(c);
+		stemmer.stem();
+		String stemmed = stemmer.toString();
+		return stemmed;
+	}
+	
+	private static String stemSentence(String sentence){
+		String summaryAfterStem = "";
+        String[] split = sentence.split("\\s+");
+        for(String s : split){
+        	String stemmed = stem(s);
+        	summaryAfterStem = summaryAfterStem + stemmed + " ";
+        }
+        return summaryAfterStem;
 	}
 
 }

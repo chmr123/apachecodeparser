@@ -13,7 +13,7 @@ public class IDF {
 	private int totaldocnum; 
 	ArrayList<HashSet<String>> documents = new ArrayList<HashSet<String>>();
 	ArrayList<String> wordlist;
-	public IDF(int totaldocnum) throws IOException{ 
+	public IDF(int totaldocnum, ArrayList<String> wordlist) throws IOException{ 
 		BufferedReader br = new BufferedReader(new FileReader("classes.txt"));
 		String line;
 		
@@ -42,11 +42,8 @@ public class IDF {
 		
 		br.close();
 		
-		this.totaldocnum = totaldocnum;
-		
-		System.out.println("Generating word list");
-		WordList wl = new WordList();
-		wordlist = wl.getAllTerms();
+		this.totaldocnum = totaldocnum;	
+		this.wordlist = wordlist;
 	}
 	
 	public LinkedHashMap<String, ArrayList<Double>> gethighIDF() throws IOException{ 

@@ -12,8 +12,9 @@ import java.util.LinkedHashMap;
 public class TFIDF {
 	ArrayList<String> highkeys = new ArrayList<String>();
 	ArrayList<String> lowkeys = new ArrayList<String>();
+	ArrayList<String> wordlist;
 	int totalSize;
-	public TFIDF(int totalSize) throws IOException{
+	public TFIDF(int totalSize, ArrayList<String> wordlist) throws IOException{
 		BufferedReader br1 = new BufferedReader(new FileReader("req.txt"));
 		String line;
 		while((line = br1.readLine()) != null){
@@ -26,13 +27,13 @@ public class TFIDF {
 			String key = line.split(">>>")[0];
 			lowkeys.add(key);
 		}
-		
+		this.wordlist = wordlist;
 		this.totalSize = totalSize;
 	}
 	public LinkedHashMap<String, ArrayList<Double>> getHighTFIDF(int size) throws IOException{
 		//System.out.println("get high tf ");
-		TF tf = new TF();
-		IDF idf = new IDF(totalSize);
+		TF tf = new TF(wordlist);
+		IDF idf = new IDF(totalSize, wordlist);
 		LinkedHashMap<String, ArrayList<Double>> highTFIDF = new LinkedHashMap<String, ArrayList<Double>>();
 		LinkedHashMap<String, ArrayList<Double>> highTF_entity = tf.gethighTF();
 		LinkedHashMap<String, ArrayList<Double>> highIDF_entity = idf.gethighIDF();
@@ -53,8 +54,8 @@ public class TFIDF {
 	}
 	
 	public LinkedHashMap<String, ArrayList<Double>> getLowTFIDF(int size) throws IOException{
-		TF tf = new TF();
-		IDF idf = new IDF(totalSize);
+		TF tf = new TF(wordlist);
+		IDF idf = new IDF(totalSize, wordlist);
 		LinkedHashMap<String, ArrayList<Double>> lowTFIDF = new LinkedHashMap<String, ArrayList<Double>>();
 		LinkedHashMap<String, ArrayList<Double>> lowTF_entity = tf.getlowTF();
 		LinkedHashMap<String, ArrayList<Double>> lowIDF_entity = idf.getlowIDF();

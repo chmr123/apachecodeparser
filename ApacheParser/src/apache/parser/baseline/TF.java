@@ -11,10 +11,8 @@ import java.util.LinkedHashMap;
 
 public class TF {
 	ArrayList<String> wordlist;
-	public TF() throws IOException{
-		System.out.println("Generating word list");
-		WordList wl = new WordList();
-		wordlist = wl.getAllTerms();
+	public TF(ArrayList<String> wordlist) throws IOException{
+		this.wordlist = wordlist;
 	}
 	public LinkedHashMap<String, ArrayList<Double>> gethighTF() throws IOException{	
 		LinkedHashMap<String, ArrayList<Double>> tf_high_all = new LinkedHashMap<String, ArrayList<Double>>();
@@ -37,8 +35,9 @@ public class TF {
 				}
 				
 				int termIndex = wordlist.indexOf(s);
-				if(termIndex == -1)
-					System.out.println(s);
+				if(termIndex == -1){
+					//System.out.println(s);
+				}
 				//System.out.println(s);
 				tfvector.set(termIndex, termfreq);
 			}
@@ -70,8 +69,9 @@ public class TF {
 				}
 				
 				int termIndex = wordlist.indexOf(s);
-				if(termIndex == -1)
-				System.out.println("oh " + s);
+				if(termIndex == -1){
+					//System.out.println("oh " + s);
+				}
 				tfvector.set(termIndex, termfreq);
 			}
 			

@@ -62,7 +62,6 @@ public class ApacheParser {
 			// here you can access the attributes of the method.
 			// this method will be called for all methods in this
 			// CompilationUnit, including inner class methods
-			
 			String[] entries = new String[4];
 			List<Node> children = n.getChildrenNodes();
 			//System.out.println(n.getName() + ":");
@@ -73,7 +72,7 @@ public class ApacheParser {
 				String sourceFile = "";
 				String comment = "";
 				if(node != null){
-					nodeName = node.toString().replaceAll("\"", "").replaceAll("'", "").replace(",", " ");
+					nodeName = node.toString().replaceAll("\"", "").replaceAll("'", "").replaceAll("\\n", " ");
 				}
 				
 				if(nodeName.contains("switch")) continue;
@@ -82,7 +81,14 @@ public class ApacheParser {
 				if(node.getComment() != null){
 					comment = node.getComment().toString().replaceAll("\"", "");
 				}
-				entries[0] = "xxx";
+				
+				String newnode = "";
+				//nodeName = nodeName.replaceAll("^[a-zA-Z0-9]", " ");
+				String[] split = nodeName.split("\\s+|\n");
+				for(String s : split){
+					newnode = newnode + s + " ";
+				}
+				entries[0] = newnode;
 				entries[1] = n.getName();
 				entries[2] = sourceFile;
 				//entries[3] = comment;
