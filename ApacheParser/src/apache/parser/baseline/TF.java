@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 
 public class TF {
+
 	ArrayList<String> wordlist;
 	public TF(ArrayList<String> wordlist) throws IOException{
 		this.wordlist = wordlist;

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 public class WordList {
+
 	
 	static Stemmer stemmer = new Stemmer();
 	public ArrayList<String> getAllTerms() throws IOException{
@@ -42,3 +43,4 @@ public class WordList {
 	
 
 }
+
