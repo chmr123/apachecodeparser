@@ -1,4 +1,4 @@
-package apache.parser.baseline;
+package apache.parser.baseline.IR;
 
 import java.util.ArrayList;
 import java.util.HashSet;

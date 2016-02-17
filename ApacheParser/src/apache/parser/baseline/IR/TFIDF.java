@@ -1,4 +1,4 @@
-package apache.parser.baseline;
+package apache.parser.baseline.IR;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -30,21 +30,26 @@ public class TFIDF {
 		this.wordlist = wordlist;
 		this.totalSize = totalSize;
 	}
-	public LinkedHashMap<String, ArrayList<Double>> getHighTFIDF(int size) throws IOException{
+	public LinkedHashMap<String, ArrayList<double[]>> getHighTFIDF(int size) throws IOException{
 		//System.out.println("get high tf ");
 		TF tf = new TF(wordlist);
 		IDF idf = new IDF(totalSize, wordlist);
-		LinkedHashMap<String, ArrayList<Double>> highTFIDF = new LinkedHashMap<String, ArrayList<Double>>();
+		LinkedHashMap<String, ArrayList<double[]>> highTFIDF = new LinkedHashMap<String, ArrayList<double[]>>();
 		LinkedHashMap<String, ArrayList<Double>> highTF_entity = tf.gethighTF();
 		LinkedHashMap<String, ArrayList<Double>> highIDF_entity = idf.gethighIDF();
 		//FileWriter fw = new FileWriter("test.txt");
 		for(String key : highkeys){	
-			ArrayList<Double> tfidf_entity = new ArrayList<Double>();
+			ArrayList<double[]> tfidf_entity = new ArrayList<double[]>();
 			ArrayList<Double> tf_high = highTF_entity.get(key);
 			ArrayList<Double> idf_high = highIDF_entity.get(key);
 			for(int i = 0; i < tf_high.size(); i++){
 				double tfidf = tf_high.get(i) * idf_high.get(i);
-				tfidf_entity.add(tfidf);
+				double[] entry = new double[2];
+				entry[0] = (double)i;
+				entry[1] = tfidf;
+				if(tfidf != 0){
+					tfidf_entity.add(entry);
+				}
 			}	
 			highTFIDF.put(key, tfidf_entity);
 		}
@@ -53,19 +58,24 @@ public class TFIDF {
 		
 	}
 	
-	public LinkedHashMap<String, ArrayList<Double>> getLowTFIDF(int size) throws IOException{
+	public LinkedHashMap<String, ArrayList<double[]>> getLowTFIDF(int size) throws IOException{
 		TF tf = new TF(wordlist);
 		IDF idf = new IDF(totalSize, wordlist);
-		LinkedHashMap<String, ArrayList<Double>> lowTFIDF = new LinkedHashMap<String, ArrayList<Double>>();
+		LinkedHashMap<String, ArrayList<double[]>> lowTFIDF = new LinkedHashMap<String, ArrayList<double[]>>();
 		LinkedHashMap<String, ArrayList<Double>> lowTF_entity = tf.getlowTF();
 		LinkedHashMap<String, ArrayList<Double>> lowIDF_entity = idf.getlowIDF();
 		for(String key : lowkeys){
-			ArrayList<Double> tfidf_entity = new ArrayList<Double>();
+			ArrayList<double[]> tfidf_entity = new ArrayList<double[]>();
 			ArrayList<Double> tf_low = lowTF_entity.get(key);
 			ArrayList<Double> idf_low = lowIDF_entity.get(key);
 			for(int i = 0; i < tf_low.size(); i++){
 				double tfidf = tf_low.get(i) * idf_low.get(i);
-				tfidf_entity.add(tfidf);
+				double[] entry = new double[2];
+				entry[0] = (double)i;
+				entry[1] = tfidf;
+				if(tfidf != 0){
+					tfidf_entity.add(entry);
+				}
 			}
 			lowTFIDF.put(key, tfidf_entity);
 		}

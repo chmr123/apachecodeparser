@@ -21,28 +21,31 @@ public class JiraCrawler {
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
 		
-		String root = "C:\\Users\\install\\Desktop\\ReqToCode\\frames";
+		String root = "frames";
 		//FileWriter fw = new FileWriter("pages.csv");
 		
-		CSVWriter writer = new CSVWriter(new FileWriter("yourfile.csv"), ',');
+		CSVWriter writer = new CSVWriter(new FileWriter("methodDescription.csv"), ',');
 	     // feed in your array (or convert your data to an array)	
-		String base = "https://lucene.apache.org/core/5_4_1/core/";
+		String base = "https://lucene.apache.org/core/5_4_1/";
 				
 		File[] filelist = new File(root).listFiles();
+		int filecount = 0;
 		for(File f : filelist){
+			filecount++;
+			String packageName = f.getName().replace(".txt", "");
 			ArrayList<String> urls = getClassURLs(f.getPath());
 			System.out.println(urls.size());
 			int count = 0;
 			for(String url : urls){
 				count++;
-				System.out.println("Processing " + count + " / " + urls.size()  + " urls");
-				Map<String, String> method_desc = getMethodDescirption(base + url);
+				System.out.println("Processing " + count + " / " + urls.size()  + " urls in " + filecount + " / " + filelist.length + " files (" + f.getName() + ")");
+				Map<String, String> method_desc = getMethodDescirption(base + "/" + packageName + "/" + url);
 				String[] entries = new String[3];
 				for(String key : method_desc.keySet()){
 					String[] split = key.split("#");
-					entries[0] = split[0]; //class name
+					entries[2] = split[0] + ".java"; //class name
 					entries[1] = split[1]; //method name
-					entries[2] = method_desc.get(key); //description
+					entries[0] = method_desc.get(key); //description
 					  writer.writeNext(entries);
 				}
 				
@@ -50,27 +53,6 @@ public class JiraCrawler {
 		}
 			
 		 writer.close();
-		
-		/*for(int i = 1; i <= 837; i++){
-			System.out.println("Fetching page " + i);
-			Document document = Jsoup.connect(base + i + "?f=-").timeout(10*1000).userAgent("Mozilla").get();
-			Elements products = document.select("div.ProductGridItem");
-			for(Element p : products){
-				String itemName = p.select("div.GridItemName").text();
-				String itemRating = p.select("div.GridItemRating").text().replace("? ", "");
-				String itemTag = p.select("div.GridItemTag").text().replace(" ? ", "");;
-				String itemPrice = p.select("div.GridItemPrice").text();
-				String itemShipping = p.select("div.GridItemShipping").text();
-				String itemCategory = p.select("div.GridItemPrimaryCategory").text().replace("more", "").replace(" ?", "");
-				
-				if(itemName.equals("next")) continue;
-				Element image = p.select("img[src$=.jpg]").first();
-				String imageURL = image.absUrl("src");
-				fw.write(itemName + "," + itemRating + "," + itemTag + "," + itemPrice + "," + itemShipping + "," + itemCategory + "," + imageURL + "\n");
-			}
-		}
-		fw.flush();
-		fw.close();*/
 
 	}
 	
