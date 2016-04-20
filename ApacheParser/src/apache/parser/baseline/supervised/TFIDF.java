@@ -86,7 +86,11 @@ public class TFIDF {
 			ArrayList<Double> tf_low = lowTF_entity.get(key);
 			ArrayList<Double> idf_low = lowIDF_entity.get(key);
 			for(int i = 0; i < tf_low.size(); i++){
+				
 				double tfidf = tf_low.get(i) * idf_low.get(i);
+				if(idf_low.get(i) == 1){
+					tfidf = 0;
+				}
 				double[] entry = new double[2];
 				entry[0] = (double)i;
 				entry[1] = tfidf;
@@ -142,7 +146,7 @@ public class TFIDF {
 			for(int i = 0; i < sortedScores.size(); i++){
 				int index = (int) tfidf_high.get(i)[0];
 				double score = tfidf_high.get(i)[1];
-				if(score < lastScore){
+				if(score < lastScore || score == 0.0){
 					break;
 				}
 				String currentWord = wordlist.get(index);

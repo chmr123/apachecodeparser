@@ -86,11 +86,13 @@ public class ApacheBaseline {
 	    for(String key : classes_codeNode.keySet()){
 	    	if(classes_methodDesc.keySet().contains(key)){
 	    		ArrayList<String> combined = new ArrayList<String>();
-	    		combined.addAll(classes_codeNode.get(key));
+	    		//combined.addAll(classes_codeNode.get(key));
 	    		combined.addAll(classes_methodDesc.get(key));
 	    		final_feature_map.put(key, combined);
 	    	}
 	    }
+	    
+	    
 	    classesSize = final_feature_map.keySet().size();
 	    
 	    //System.out.println("Project class size: " + classesInProjects.size());
@@ -140,6 +142,7 @@ public class ApacheBaseline {
 			highIndex++;
 		}
 		
+		System.out.println();
 		for(double threshold = 0.1; threshold < 0.9; threshold += 0.1){
 			System.out.printf("Threshold: %.1f\n",threshold);
 			int[][] predictedLinkMatrix = new int[reqSize][classesSize];
@@ -345,7 +348,7 @@ public class ApacheBaseline {
 				if(predictedMatrix[i][j] == 0 && trueMatrix[i][j] == 1) fn++;
 			}
 		}
-		System.out.println(tp + " " + fp + " " + fn);
+		//System.out.println(tp + " " + fp + " " + fn);
 		//double recall = 0;
 		//double precision = 0;
 		//double fscore = 0;

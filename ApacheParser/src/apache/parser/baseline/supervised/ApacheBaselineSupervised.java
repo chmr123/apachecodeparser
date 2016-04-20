@@ -7,11 +7,16 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import com.opencsv.CSVReader;
@@ -39,8 +44,27 @@ public class ApacheBaselineSupervised {
 	
 	static ArrayList<String> stopwords = new ArrayList<String>();
 	public static void main(String[] args) throws IOException {
-		// TODO Auto-generated method stub
 		
+		// TODO Auto-generated method stub
+		 int topwordnum = 10;
+		 int linkcutoff = 3;
+		 int apicutoff = 10;
+		 int negativeCutOff = 20000;
+		 for(int i = 0;i < args.length;i++) {	
+		       if ("-t".equals(args[i])) {
+		    	   topwordnum = Integer.valueOf(args[i+1]);
+		    	  i++;
+		      } else if ("-n".equals(args[i])) {
+		    	  negativeCutOff = Integer.valueOf(args[i+1]);;
+		          i++;
+		      } else if ("-l".equals(args[i])) {
+		    	  linkcutoff = Integer.valueOf(args[i+1]);;
+		          i++;
+		      }else if ("-a".equals(args[i])) {
+		    	  apicutoff = Integer.valueOf(args[i+1]);;
+		          i++;
+		      }
+		    }
 		System.out.println("Initialization...");
 		Map<String, String> req = new LinkedHashMap<String, String>();
 		Map<String, ArrayList<String>> class_methodDesc_map = new LinkedHashMap<String, ArrayList<String>>();
@@ -66,6 +90,7 @@ public class ApacheBaselineSupervised {
 	        summary = stemSentence(summary);  
 	        description = stemSentence(description);
 	        //req.put(reqID, summary);
+	        //String content = summary;
 	        String content = summary + " " + description;
 	        String[] splitContent = content.split("\\s+");
 	        String stopWordRemovedContent = "";
@@ -116,8 +141,13 @@ public class ApacheBaselineSupervised {
 	    String root = "src";
 	    CodeParser codeparser = new CodeParser(classesInCommon, root);
 	    System.out.println("Parsing the source code...");
-	    Map<String, Set<String>> api = codeparser.getIncludedClasses(); // get API used in this file
-	   
+	   // Map<String, LinkedHashSet<String>> api = codeparser.getIncludedClasses(); // get API used in this file
+	    Map<String, ArrayList<String>> apiArray = codeparser.getIncludedClassesAsArrayList();
+	    
+	    System.out.println("Getting the top " + apicutoff + " classes...");
+	    ClassTFIDF classtfidf = new ClassTFIDF();
+	    LinkedHashMap<String, LinkedHashMap<String, Double>> classTFIDF = classtfidf.getClassTFIDF(apiArray);
+	    Map<String, LinkedHashSet<String>> api = classtfidf.getFilteredAPI(classTFIDF, 10); // get API used in this file
 	 
 	    FileWriter fw1 = new FileWriter("api.txt");
 		for(String key : api.keySet()){
@@ -141,6 +171,8 @@ public class ApacheBaselineSupervised {
 		System.out.println("Generating truelinks...");
 	    TrueLink truelink = new TrueLink();
 		int[][] trueLinkMatrix = truelink.getTrueLink(reqSize, classesSize);
+		ArrayList<String> allLinks = truelink.getLinks();
+		Map<String, Integer> linkstat = truelink.statistics();
 		
 		System.out.println("Generating TFIDF matrix of requirements...");
 	    TFIDF tfidf = new TFIDF(reqSize + classesSize, wordlist);
@@ -148,7 +180,7 @@ public class ApacheBaselineSupervised {
 		//LinkedHashMap<String, ArrayList<double[]>> lowTFIDF = tfidf.getLowTFIDF(classesSize);
 		
 		System.out.println("Getting the top terms of requirements...");
-		LinkedHashMap<String, ArrayList<String>> reqTopWords = tfidf.getTopWords(5, highTFIDF);
+		LinkedHashMap<String, ArrayList<String>> reqTopWords = tfidf.getTopWords(topwordnum, highTFIDF);
 		FileWriter fw = new FileWriter("topwords.txt");
 		for(String key : reqTopWords.keySet()){
 			fw.write(key + ": ");
@@ -161,11 +193,36 @@ public class ApacheBaselineSupervised {
 		fw.flush();
 		fw.close();
 		
+		System.out.println("Generating all paired features...");
 		Feature feature = new Feature(reqTopWords, api);
 		//LinkedHashMap<String, ArrayList<String>> lowTopWords = tfidf.getTopWords(10, lowTFIDF);
+		ArrayList<String> featureVector = feature.getFeatureVector();
 		
+		System.out.println("Sorting all features");
+		Collections.sort(featureVector);
 		
-
+		System.out.println("Generating all instances...");
+		LinkedHashMap<String, Instance> instances = new LinkedHashMap<String, Instance>();
+		int reqSize = reqTopWords.size();
+	
+		int count = 0;
+		for(String reqKey : reqTopWords.keySet()){
+			System.out.print("Processing on requirement " + (++count) + " / " + reqSize + "\r");
+			ArrayList<String> topwords = reqTopWords.get(reqKey);
+			for(String apiKey : api.keySet()){
+				if(linkstat.get(apiKey) <= linkcutoff) continue;
+				LinkedHashSet<String> classes = api.get(apiKey);
+				Instance instance  = new Instance();
+				instance.createInstance(reqKey, topwords, apiKey, classes, featureVector, allLinks);
+				instances.put(reqKey+"_"+apiKey, instance);
+			}
+		}
+		System.out.println();
+		Files data = new Files(instances);
+		ArrayList<String> reqKeys = new ArrayList<String>(reqTopWords.keySet());
+		ArrayList<String> apiKeys = new ArrayList<String>(api.keySet());
+		data.generateTrainingFiles(reqKeys, apiKeys, linkstat, linkcutoff, negativeCutOff);
+		data.generateTestingFiles(reqKeys, apiKeys, linkstat, linkcutoff);
 	}
 	
 	public static boolean isAlpha(String name) {

@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,11 +17,13 @@ public class CodeParser {
 	//ArrayList<String> javaClasses;
 	ArrayList<String> apiClasses;
 	Map<String, String> filePath;
-	Map<String, Set<String>> apiMapping;
+	LinkedHashMap<String, LinkedHashSet<String>> apiMappingSet;
+	LinkedHashMap<String, ArrayList<String>> apiMappingArray;
 
 	public CodeParser(Set<String> commonClasses, String root) throws IOException {
 		this.filePath = new HashMap<String, String>();
-		this.apiMapping = new HashMap<String, Set<String>>();
+		this.apiMappingSet = new LinkedHashMap<String, LinkedHashSet<String>>();
+		this.apiMappingArray = new LinkedHashMap<String, ArrayList<String>>();
 		this.commonClasses = commonClasses;		
 		this.apiClasses = getLuceneClasses(root);
 		//this.javaClasses = getJavaClasses();
@@ -32,7 +36,7 @@ public class CodeParser {
 	 * @return
 	 * @throws IOException
 	 */
-	public Map<String, Set<String>> getIncludedClasses() throws IOException {
+	public LinkedHashMap<String, LinkedHashSet<String>> getIncludedClasses() throws IOException {
 		int parsedCount = 0;
 		int nullCount = 0;
 		for (String file : commonClasses) {
@@ -43,18 +47,43 @@ public class CodeParser {
 			}
 			BufferedReader br = new BufferedReader(new FileReader(new File(path)));
 			String line;
-			Set<String> classesInFile = new HashSet<String>();
+			LinkedHashSet<String> classesInFile = new LinkedHashSet<String>();
 			while ((line = br.readLine()) != null) {
 				Set<String> classes = getUsedClasses(line, apiClasses);
 				classesInFile.addAll(classes);
 			}
-			apiMapping.put(file, classesInFile);
+			apiMappingSet.put(file, classesInFile);
 			parsedCount++;
 			br.close();
 		}
 		System.out.println(parsedCount + " files parsed.");
 		System.out.println(nullCount + " files not parsed.");
-		return apiMapping;
+		return apiMappingSet;
+	}
+	
+	public LinkedHashMap<String, ArrayList<String>> getIncludedClassesAsArrayList() throws IOException {
+		int parsedCount = 0;
+		int nullCount = 0;
+		for (String file : commonClasses) {
+			String path = filePath.get(file);
+			if(path == null) {
+				nullCount++;
+				continue;
+			}
+			BufferedReader br = new BufferedReader(new FileReader(new File(path)));
+			String line;
+			ArrayList<String> classesInFile = new ArrayList<String>();
+			while ((line = br.readLine()) != null) {
+				ArrayList<String> classes = getUsedClassesArrayList(line, apiClasses);
+				classesInFile.addAll(classes);
+			}
+			apiMappingArray.put(file, classesInFile);
+			parsedCount++;
+			br.close();
+		}
+		System.out.println(parsedCount + " files parsed.");
+		System.out.println(nullCount + " files not parsed.");
+		return apiMappingArray;
 	}
 
 	private ArrayList<String> getJavaClasses() throws IOException {
@@ -89,14 +118,14 @@ public class CodeParser {
 		}
 	}
 
-	private Set<String> getUsedClasses(String line, ArrayList<String> javaClasses, ArrayList<String> appClasses) {
+	private ArrayList<String> getUsedClassesArrayList(String line, ArrayList<String> appClasses) {
 		line = line.replaceAll("[^a-zA-Z0-9]", " ");
 		String[] split = line.split("\\s+");
-		Set<String> usedClasses = new HashSet<String>();
+		ArrayList<String> usedClasses = new ArrayList<String>();
 		for (String s : split) {
-			if (javaClasses.contains(s)) {
+			/*if (javaClasses.contains(s)) {
 				usedClasses.add(s);
-			}
+			}*/
 			if (appClasses.contains(s)) {
 				usedClasses.add(s);
 			}

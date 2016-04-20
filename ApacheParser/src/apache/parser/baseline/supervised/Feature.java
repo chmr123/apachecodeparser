@@ -7,7 +7,7 @@ import java.util.Set;
 
 public class Feature {
 	ArrayList<String> allfeatures = new ArrayList<String>();
-	public Feature(Map<String, ArrayList<String>> req, Map<String, Set<String>> api){
+	public Feature(Map<String, ArrayList<String>> req, Map<String, LinkedHashSet<String>> api){
 		Set<String> terms = new LinkedHashSet<String>();
 		Set<String> classes = new LinkedHashSet<String>();
 		System.out.println("Generating features...");
@@ -33,5 +33,9 @@ public class Feature {
 		}
 		
 		System.out.println(allfeatures.size() + " features generated...");
+	}
+	
+	public ArrayList<String> getFeatureVector(){
+		return allfeatures;
 	}
 }
